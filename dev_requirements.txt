@@ -1,0 +1,5 @@
+jupyter
+flake8
+black
+tqdm
+-r requirements.txt
