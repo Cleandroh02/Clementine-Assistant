@@ -96,7 +96,6 @@ pip install -r dev_requirements.txt
 ```bash
 python src/database/database.py --env dev --table_name mitabla /path/to/data/
 ```
-python src/database/database.py --env dev --table_name clementine_embeddings /data/
 
 5. Run the front-end
 
