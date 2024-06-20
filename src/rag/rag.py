@@ -23,11 +23,11 @@ from src.config import get_settings
 class RagApp(BaseModel):
     table_name: str = "clementine_embeddings"
     llm: HuggingFacePipeline = None
-    llm_model_name: str = "google/flan-t5-small"
+    llm_model_name: str = "google/flan-t5-large"
     embeddings_model_name: str = "sentence-transformers/all-MiniLM-L6-v2"
     db: VectorStore = None
     embeddings: Embeddings = None
-    template: Optional[str] = """{context}\n\n question: {question}"""
+    template: Optional[str] = """Based on the following context:.\n {context}.\n\n Answer adding an explanation, this question:\n\n {question}"""
     env: str = "dev"
 
     class Config:
@@ -106,9 +106,10 @@ class RagApp(BaseModel):
         if self.llm_model_name not in [
             "gpt2",
             "google/flan-t5-large",
-            "google/flan-t5-small",
         ]:
-            self.llm_model_name = "google/flan-t5-small"
+            self.llm_model_name = "google/flan-t5-large"
+        
+        assert self.llm_model_name == "google/flan-t5-large"
 
         tokenizer = AutoTokenizer.from_pretrained(self.llm_model_name)
 
@@ -120,8 +121,10 @@ class RagApp(BaseModel):
                 "text-generation",
                 model=model,
                 tokenizer=tokenizer,
-                max_new_tokens=5000
+                max_new_tokens=512
             )
+
+        
 
         elif "google/flan-t5" in self.llm_model_name:
             model = AutoModelForSeq2SeqLM.from_pretrained(self.llm_model_name)
@@ -129,7 +132,7 @@ class RagApp(BaseModel):
                 "text2text-generation",
                 model=model,
                 tokenizer=tokenizer,
-                max_new_tokens=5000,
+                max_new_tokens=512,
             )
 
         self.llm = HuggingFacePipeline(
@@ -137,7 +140,7 @@ class RagApp(BaseModel):
             model_kwargs={"temperature": 0},
         )
 
-    def answer_question(self, question: str, top_k: int = 3) -> Dict:
+    def answer_question(self, question: str, top_k: int = 2) -> Dict:
         """Answer a question based on an LLM model and a retriever.
 
         Args:

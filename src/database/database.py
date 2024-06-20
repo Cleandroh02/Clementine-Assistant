@@ -8,8 +8,8 @@ from psycopg2 import connect
 from langchain.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
-#import sys # noqa
-# sys.path.append('.') # noqa
+import sys # noqa
+sys.path.append('.') # noqa
 from src.config import get_settings
 
 
@@ -85,7 +85,7 @@ def process_md_files(folder_path, env, table_name):
 
     settings = get_settings(env=env)
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1500, chunk_overlap=300
+        chunk_size=1000, chunk_overlap=300
         )
 
     create_vector_extension(settings)
